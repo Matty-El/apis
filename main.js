@@ -1,14 +1,30 @@
-var xhr = new XMLHttpRequest();
-var data;
+const baseURL = "https://ci-swapi.herokuapp.com/api/";
 
-xhr.open("GET", "https://ci-swapi.herokuapp.com/api/");
+function getData(type, cb) {
+    var xhr = new XMLHttpRequest();
 
-xhr.send();
+    xhr.open("GET", baseURL + type + "/");
+    xhr.send();
 
-xhr.onreadystatechange = function() {
-    if (this.readyState = 4&& this.status == 200) {
-        data = this.responseText;
-    }
-};
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            cb(JSON.parse(this.responseText));
+        }
+    };
+}
 
-console.log(data);
+function writeToDocument(type) {
+    var el = document.getElementById("data");
+    el.innerHTML = "";
+    getData(type, function(data) {
+        console.dir(data);
+        data = data.results;
+
+        data.forEach(function(item) {
+            Object.keys(item).forEach(function(key) {
+                console.log(key);
+            })
+            el.innerHTML += "<p>" + item.name + "</p>";
+        });
+    })
+}
